@@ -170,5 +170,3 @@ npm start
 This project is created for educational/assessment purposes.
 
 ---
-
-**Built with ❤️ for Scaler SWE Assessment**
