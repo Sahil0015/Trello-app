@@ -3,9 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
 from app.api import boards, lists, cards, labels, search, members
+from app.seed import seed
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
+
+# Auto-seed database if empty (for fresh deployments)
+seed()
 
 app = FastAPI(title="Trello Clone API", version="1.0.0")
 
@@ -28,3 +32,12 @@ app.include_router(members.router)
 @app.get("/")
 def root():
     return {"message": "Trello Clone API is running!"}
+
+@app.post("/seed")
+def seed_database():
+    """
+    Manually trigger database seeding.
+    Only seeds if database is empty.
+    """
+    seed()
+    return {"message": "Database seeding completed (if it was empty)"}
