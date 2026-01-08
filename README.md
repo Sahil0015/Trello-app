@@ -164,14 +164,31 @@ Open http://localhost:3000 and:
 
 ## 🔧 Configuration
 
-### Backend
-- Database: SQLite by default (file: `trello.db`)
-- Port: 8000 (configurable via uvicorn)
+### Backend (Deployed)
+- **Live URL**: https://trello-backend-production.up.railway.app
+- **API Docs**: https://trello-backend-production.up.railway.app/docs
 - CORS: Enabled for all origins
 
 ### Frontend
-- API Base URL: `http://localhost:8000` (configured in `src/api/axios.js`)
-- Port: 3000 (default React port)
+- **API Base URL**: Uses deployed backend by default
+- For local development, create `.env.local`:
+  ```
+  REACT_APP_API_URL=http://localhost:8000
+  ```
+
+## 🚀 Deployment
+
+### Backend (Railway) ✅
+Already deployed at: https://trello-backend-production.up.railway.app
+
+### Frontend (Vercel/Netlify)
+1. Push code to GitHub
+2. Connect repository to Vercel or Netlify
+3. Configure:
+   - Build command: `npm run build`
+   - Output directory: `build`
+   - Root directory: `frontend`
+4. Deploy!
 
 ## 📄 License
 

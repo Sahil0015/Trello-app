@@ -145,11 +145,15 @@ npm test        # Run tests
 ## Customization
 
 ### Change API URL
-Edit `src/api/axios.js`:
+Set the environment variable `REACT_APP_API_URL` or edit `src/api/axios.js`:
 ```javascript
-const api = axios.create({
-  baseURL: 'http://your-api-url:port',
-});
+// Default: https://trello-backend-production.up.railway.app
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://trello-backend-production.up.railway.app';
+```
+
+For local development, create a `.env.local` file:
+```
+REACT_APP_API_URL=http://localhost:8000
 ```
 
 ### Change Default Board
@@ -162,7 +166,20 @@ const BOARD_ID = 1;  // Change to your board ID
 
 | Issue | Solution |
 |-------|----------|
-| Cards not loading | Ensure backend is running on port 8000 |
+| Cards not loading | Check if backend is accessible (deployed or local) |
 | Drag not working | Refresh the page, check browser console |
 | Search not working | Click "Search" button after entering filters |
-| CORS errors | Backend should have CORS enabled for localhost:3000 |
+| CORS errors | Backend should have CORS enabled for your frontend domain |
+
+## Deployment
+
+### Backend (Already Deployed)
+- **URL**: https://trello-backend-production.up.railway.app
+- **Docs**: https://trello-backend-production.up.railway.app/docs
+
+### Frontend Deployment (Vercel/Netlify)
+1. Push code to GitHub
+2. Connect to Vercel/Netlify
+3. Set build command: `npm run build`
+4. Set output directory: `build`
+5. (Optional) Set env variable: `REACT_APP_API_URL=https://trello-backend-production.up.railway.app`
