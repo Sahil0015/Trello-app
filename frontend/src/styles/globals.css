@@ -630,6 +630,79 @@ body {
   border-radius: 4px;
 }
 
+/* Dropdown divider */
+.dropdown-divider {
+  height: 1px;
+  background: #dfe1e6;
+  margin: 8px 0;
+}
+
+/* Create new item button */
+.dropdown-item.create-new {
+  color: #5e6c84;
+  font-weight: 500;
+}
+
+.dropdown-item.create-new:hover {
+  color: #172b4d;
+}
+
+/* Create form inside dropdown */
+.create-form {
+  padding: 8px;
+}
+
+.create-form input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #dfe1e6;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.create-form input[type="text"]:focus {
+  border-color: #0079bf;
+  outline: none;
+}
+
+/* Color picker grid */
+.color-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.color-option {
+  width: 32px;
+  height: 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.1s;
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+}
+
+.color-option.selected {
+  border-color: #172b4d;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px #172b4d;
+}
+
+/* Form actions */
+.form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-small {
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+}
+
 /* === LOADING & EMPTY STATE === */
 .loading {
   display: flex;

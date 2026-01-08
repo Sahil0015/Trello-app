@@ -33,6 +33,19 @@ import {
   toggleChecklistItem,
   deleteChecklistItem
 } from '../../api/cards';
+import { createLabel, createMember } from '../../api/labels';
+
+// Predefined colors for labels
+const LABEL_COLORS = [
+  '#61bd4f', '#f2d600', '#ff9f1a', '#eb5a46', '#c377e0',
+  '#0079bf', '#00c2e0', '#51e898', '#ff78cb', '#344563'
+];
+
+// Predefined colors for member avatars
+const AVATAR_COLORS = [
+  '#5e6c84', '#0079bf', '#d29034', '#519839', '#b04632',
+  '#89609e', '#cd5a91', '#4bbf6b', '#00aecc', '#838c91'
+];
 
 export function CardModal({ isOpen, onClose, card, listId, allLabels, allMembers, onRefresh }) {
   const [title, setTitle] = useState(card.title);
@@ -41,6 +54,16 @@ export function CardModal({ isOpen, onClose, card, listId, allLabels, allMembers
   const [newChecklistItem, setNewChecklistItem] = useState('');
   const [showLabelPicker, setShowLabelPicker] = useState(false);
   const [showMemberPicker, setShowMemberPicker] = useState(false);
+  
+  // State for creating new labels/members
+  const [showNewLabelForm, setShowNewLabelForm] = useState(false);
+  const [newLabelName, setNewLabelName] = useState('');
+  const [newLabelColor, setNewLabelColor] = useState(LABEL_COLORS[0]);
+  
+  const [showNewMemberForm, setShowNewMemberForm] = useState(false);
+  const [newMemberName, setNewMemberName] = useState('');
+  const [newMemberEmail, setNewMemberEmail] = useState('');
+  const [newMemberColor, setNewMemberColor] = useState(AVATAR_COLORS[0]);
 
   useEffect(() => {
     setTitle(card.title);
@@ -110,6 +133,22 @@ export function CardModal({ isOpen, onClose, card, listId, allLabels, allMembers
     }
   };
 
+  /**
+   * Handle creating a new label
+   */
+  const handleCreateLabel = async (e) => {
+    e.preventDefault();
+    if (!newLabelName.trim()) return;
+    try {
+      await createLabel(newLabelName.trim(), newLabelColor);
+      setNewLabelName('');
+      setShowNewLabelForm(false);
+      onRefresh();
+    } catch (err) {
+      console.error('Failed to create label:', err);
+    }
+  };
+
   // Members
   const handleToggleMember = async (member) => {
     const hasMember = card.members?.some(m => m.id === member.id);
@@ -122,6 +161,23 @@ export function CardModal({ isOpen, onClose, card, listId, allLabels, allMembers
       onRefresh();
     } catch (err) {
       console.error('Failed to toggle member:', err);
+    }
+  };
+
+  /**
+   * Handle creating a new member
+   */
+  const handleCreateMember = async (e) => {
+    e.preventDefault();
+    if (!newMemberName.trim() || !newMemberEmail.trim()) return;
+    try {
+      await createMember(newMemberName.trim(), newMemberEmail.trim(), newMemberColor);
+      setNewMemberName('');
+      setNewMemberEmail('');
+      setShowNewMemberForm(false);
+      onRefresh();
+    } catch (err) {
+      console.error('Failed to create member:', err);
     }
   };
 
@@ -319,6 +375,49 @@ export function CardModal({ isOpen, onClose, card, listId, allLabels, allMembers
                     {card.labels?.some(l => l.id === label.id) && ' ✓'}
                   </div>
                 ))}
+                
+                {/* Divider */}
+                <div className="dropdown-divider" />
+                
+                {/* Create New Label */}
+                {!showNewLabelForm ? (
+                  <div 
+                    className="dropdown-item create-new"
+                    onClick={() => setShowNewLabelForm(true)}
+                  >
+                    + Create new label
+                  </div>
+                ) : (
+                  <form onSubmit={handleCreateLabel} className="create-form">
+                    <input
+                      type="text"
+                      placeholder="Label name"
+                      value={newLabelName}
+                      onChange={(e) => setNewLabelName(e.target.value)}
+                      autoFocus
+                    />
+                    <div className="color-picker">
+                      {LABEL_COLORS.map(color => (
+                        <div
+                          key={color}
+                          className={`color-option ${newLabelColor === color ? 'selected' : ''}`}
+                          style={{ backgroundColor: color }}
+                          onClick={() => setNewLabelColor(color)}
+                        />
+                      ))}
+                    </div>
+                    <div className="form-actions">
+                      <button type="submit" className="btn btn-primary btn-small">Create</button>
+                      <button 
+                        type="button" 
+                        className="btn btn-secondary btn-small"
+                        onClick={() => setShowNewLabelForm(false)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
             )}
           </div>
@@ -349,6 +448,55 @@ export function CardModal({ isOpen, onClose, card, listId, allLabels, allMembers
                     {card.members?.some(m => m.id === member.id) && ' ✓'}
                   </div>
                 ))}
+                
+                {/* Divider */}
+                <div className="dropdown-divider" />
+                
+                {/* Create New Member */}
+                {!showNewMemberForm ? (
+                  <div 
+                    className="dropdown-item create-new"
+                    onClick={() => setShowNewMemberForm(true)}
+                  >
+                    + Add new member
+                  </div>
+                ) : (
+                  <form onSubmit={handleCreateMember} className="create-form">
+                    <input
+                      type="text"
+                      placeholder="Member name"
+                      value={newMemberName}
+                      onChange={(e) => setNewMemberName(e.target.value)}
+                      autoFocus
+                    />
+                    <input
+                      type="email"
+                      placeholder="Email address"
+                      value={newMemberEmail}
+                      onChange={(e) => setNewMemberEmail(e.target.value)}
+                    />
+                    <div className="color-picker">
+                      {AVATAR_COLORS.map(color => (
+                        <div
+                          key={color}
+                          className={`color-option ${newMemberColor === color ? 'selected' : ''}`}
+                          style={{ backgroundColor: color }}
+                          onClick={() => setNewMemberColor(color)}
+                        />
+                      ))}
+                    </div>
+                    <div className="form-actions">
+                      <button type="submit" className="btn btn-primary btn-small">Add</button>
+                      <button 
+                        type="button" 
+                        className="btn btn-secondary btn-small"
+                        onClick={() => setShowNewMemberForm(false)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
             )}
           </div>
