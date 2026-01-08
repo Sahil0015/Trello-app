@@ -30,12 +30,13 @@ Connected to backend: [https://trello-backend-production.up.railway.app](https:/
 - ✅ Search cards by title/description
 - ✅ Filter by labels and members
 
-## Setup Instructions
+## Local Development Setup
+
+> **Note**: The frontend is already deployed at https://trello-app-iota.vercel.app. Follow these steps only if you want to run it locally.
 
 ### Prerequisites
 - Node.js 18+ installed
 - npm (comes with Node.js)
-- Backend running at `http://localhost:8000` (for local dev) or use deployed backend
 
 ### 1. Navigate to frontend folder
 ```bash
@@ -63,7 +64,7 @@ frontend/
 │
 ├── src/
 │   ├── api/                    # Axios instance and API functions
-│   │   ├── axios.js            # Configured axios instance (baseURL: localhost:8000)
+│   │   ├── axios.js            # Configured axios instance (uses deployed backend)
 │   │   ├── boards.js           # Board API calls + search
 │   │   ├── lists.js            # List CRUD operations
 │   │   └── cards.js            # Card operations + labels/members/checklist
@@ -95,7 +96,7 @@ frontend/
 │   │   └── useBoard.js         # Board data fetching hook
 │   │
 │   ├── pages/                  # Page components
-│   │   └── BoardPage.jsx       # Main board page (uses boardId = 1)
+│   │   └── BoardPage.jsx       # Main board page (auto-creates board if needed)
 │   │
 │   ├── styles/                 # CSS styles
 │   │   └── globals.css         # All styling (Trello-inspired)
@@ -134,7 +135,7 @@ frontend/
 | Decision | Reason |
 |----------|--------|
 | **No Context/Reducers** | Uses prop drilling and useState for simplicity (beginner-friendly) |
-| **Hardcoded Board ID** | Uses boardId = 1 from seed data (single-board demo) |
+| **Auto Board Creation** | App automatically finds or creates a board on startup |
 | **Isolated DnD** | All drag-drop logic lives in `/dnd` folder for clarity |
 | **API Abstraction** | All API calls go through `/api` files (easy to modify) |
 | **Functional Components** | Modern React with hooks only (no class components) |
@@ -162,20 +163,20 @@ For local development, create a `.env.local` file:
 REACT_APP_API_URL=http://localhost:8000
 ```
 
-### Change Default Board
-Edit `src/pages/BoardPage.jsx`:
-```javascript
-const BOARD_ID = 1;  // Change to your board ID
+### For Local Development
+Create a `.env.local` file to use a local backend:
+```
+REACT_APP_API_URL=http://localhost:8000
 ```
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| Cards not loading | Check if backend is accessible (deployed or local) |
+| Cards not loading | Check https://trello-backend-production.up.railway.app is accessible |
 | Drag not working | Refresh the page, check browser console |
 | Search not working | Click "Search" button after entering filters |
-| CORS errors | Backend should have CORS enabled for your frontend domain |
+| Empty board | The app auto-creates a board and auto-seeds sample data |
 
 ## Deployment
 

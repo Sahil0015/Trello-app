@@ -82,7 +82,9 @@ backend/
 └── README.md                   # This file
 ```
 
-## Setup Instructions
+## Local Development Setup
+
+> **Note**: The backend is already deployed at https://trello-backend-production.up.railway.app. Follow these steps only if you want to run it locally.
 
 ### 1. Navigate to backend folder
 ```bash
@@ -122,11 +124,15 @@ uvicorn app.main:app --reload --port 8000
 
 The API will be available at `http://localhost:8000`
 
+> Production API: https://trello-backend-production.up.railway.app
+
 ## API Documentation
 
-Once the server is running, access the interactive API docs:
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
+Access the interactive API docs:
+- **Swagger UI**: https://trello-backend-production.up.railway.app/docs
+- **ReDoc**: https://trello-backend-production.up.railway.app/redoc
+
+For local development: `http://localhost:8000/docs`
 
 ## API Endpoints
 
@@ -255,39 +261,7 @@ checklist_items
 └── card_id (FK → cards)
 ```
 
-## Testing the API
-
-You can test the API using:
-1. **Swagger UI** at http://localhost:8000/docs (recommended)
-2. **cURL** commands
-3. **Postman** or similar tools
-
-### Example cURL Commands
-
-```bash
-# Get all boards
-curl http://localhost:8000/boards/
-
-# Create a board
-curl -X POST http://localhost:8000/boards/ \
-  -H "Content-Type: application/json" \
-  -d '{"title": "My Board"}'
-
-# Get a board with lists and cards
-curl http://localhost:8000/boards/1
-
-# Create a list
-curl -X POST http://localhost:8000/lists/ \
-  -H "Content-Type: application/json" \
-  -d '{"title": "To Do", "board_id": 1}'
-
-# Create a card
-curl -X POST http://localhost:8000/cards/ \
-  -H "Content-Type: application/json" \
-  -d '{"title": "My Task", "list_id": 1}'
-
-# Move a card
-curl -X PATCH http://localhost:8000/cards/1/move \
+## Testing the API\n\nYou can test the API using:\n1. **Swagger UI** at https://trello-backend-production.up.railway.app/docs (recommended)\n2. **cURL** commands\n3. **Postman** or similar tools\n\n### Example cURL Commands\n\n```bash\n# Base URL\nAPI=\"https://trello-backend-production.up.railway.app\"\n\n# Get all boards\ncurl $API/boards/\n\n# Create a board\ncurl -X POST $API/boards/ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"title\": \"My Board\"}'\n\n# Get a board with lists and cards\ncurl $API/boards/1\n\n# Create a list\ncurl -X POST $API/lists/ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"title\": \"To Do\", \"board_id\": 1}'\n\n# Create a card\ncurl -X POST $API/cards/ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"title\": \"My Task\", \"list_id\": 1}'\n\n# Move a card\ncurl -X PATCH $API/cards/1/move \\
   -H "Content-Type: application/json" \
   -d '{"list_id": 2, "position": 1}'
 

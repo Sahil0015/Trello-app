@@ -71,63 +71,21 @@ Scaler_SWE_assessment/
 └── README.md               # This file
 ```
 
-## 🚀 Quick Start
+## 🚀 Getting Started
 
-### Prerequisites
-- Python 3.8+
-- Node.js 18+
-- pip (Python package manager)
-- npm (Node package manager)
+Simply visit the live demo: **https://trello-app-iota.vercel.app**
 
-### 1. Clone the Repository
-```bash
-git clone <repository-url>
-cd Scaler_SWE_assessment
-```
-
-### 2. Start the Backend
-```bash
-cd backend
-
-# Create virtual environment
-python -m venv venv
-
-# Activate virtual environment
-# Windows:
-venv\Scripts\activate
-# macOS/Linux:
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Seed database with sample data
-python -m app.seed
-
-# Start the server
-uvicorn app.main:app --reload --port 8000
-```
-
-Backend will be available at: **http://localhost:8000**
-
-### 3. Start the Frontend (in a new terminal)
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm start
-```
-
-Frontend will be available at: **http://localhost:3000**
+The application comes pre-loaded with sample data including boards, lists, cards, labels, and members. You can immediately start:
+- Dragging cards between lists
+- Creating new lists and cards
+- Editing card details, labels, and members
+- Searching and filtering cards
 
 ## 📖 API Documentation
 
-Once the backend is running, access interactive API docs:
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
+Access the interactive API documentation:
+- **Swagger UI**: https://trello-backend-production.up.railway.app/docs
+- **ReDoc**: https://trello-backend-production.up.railway.app/redoc
 
 ## 🎨 Screenshots
 
@@ -139,50 +97,61 @@ The application features:
 
 ## 📝 Sample Data
 
-After running `python -m app.seed`, you'll have:
-- 1 Board: "Project Alpha"
-- 4 Lists: Backlog, To Do, In Progress, Done
-- 6 Sample Cards with descriptions
-- 4 Labels: Bug (red), Feature (green), Urgent (orange), Documentation (blue)
+The deployed app comes pre-loaded with sample data:
+- 1 Board: "Project Management"
+- 4 Lists: To Do, In Progress, Review, Done
+- 6 Sample Cards with descriptions and due dates
+- 5 Labels: Bug (red), Feature (blue), Enhancement (purple), Urgent (orange), Documentation (teal)
 - 3 Members: John Doe, Jane Smith, Bob Wilson
 - Checklist items on some cards
 
 ## 🧪 Testing
 
-### Backend API Testing
+### Try the Live App
+1. Visit https://trello-app-iota.vercel.app
+2. Drag cards between lists
+3. Click a card to open the modal and edit details
+4. Use the search bar and filters in the header
+5. Create new labels and members from the card modal
+
+### API Testing
 ```bash
 # Using Swagger UI (recommended)
-# Open http://localhost:8000/docs
+# Open https://trello-backend-production.up.railway.app/docs
 
 # Using cURL
-curl http://localhost:8000/boards/1
-curl http://localhost:8000/search/cards?q=bug
+curl https://trello-backend-production.up.railway.app/boards/1
+curl https://trello-backend-production.up.railway.app/search/cards?q=bug
 ```
-
-### Frontend Testing
-Open http://localhost:3000 and:
-1. Drag cards between lists
-2. Click a card to open the modal
-3. Use search/filter in the header
 
 ## 📚 Additional Documentation
 
 - [Backend README](./backend/README.md) - Detailed API documentation
 - [Frontend README](./frontend/README.md) - Component structure and design decisions
 
-## 🔧 Configuration
+## 🔧 Local Development
 
-### Backend (Deployed)
-- **Live URL**: https://trello-backend-production.up.railway.app
-- **API Docs**: https://trello-backend-production.up.railway.app/docs
-- CORS: Enabled for all origins
+To run the application locally:
+
+### Backend
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate  # Windows
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
 
 ### Frontend
-- **API Base URL**: Uses deployed backend by default
-- For local development, create `.env.local`:
-  ```
-  REACT_APP_API_URL=http://localhost:8000
-  ```
+```bash
+cd frontend
+npm install
+
+# Create .env.local to use local backend
+echo REACT_APP_API_URL=http://localhost:8000 > .env.local
+
+npm start
+```
 
 ## 🚀 Deployment
 
