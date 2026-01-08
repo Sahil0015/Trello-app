@@ -35,7 +35,10 @@ export function useBoard(boardId) {
    * Uses useCallback to prevent unnecessary re-renders
    */
   const fetchBoard = useCallback(async () => {
-    if (!boardId) return;
+    if (!boardId) {
+      setLoading(false);
+      return;
+    }
     
     try {
       setLoading(true);

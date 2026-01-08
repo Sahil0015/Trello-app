@@ -2,28 +2,54 @@
  * BoardPage.jsx - Main Board Page Component
  * 
  * This is the main page component that:
+ * - Automatically fetches or creates a board on load
  * - Uses the useBoard hook to fetch board data
  * - Renders the BoardHeader for search/filter
  * - Renders the Board with lists and cards
  * - Handles search result state
- * 
- * Uses a hardcoded boardId = 1 (from seed data)
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BoardHeader from '../components/board/BoardHeader';
 import Board from '../components/board/Board';
 import useBoard from '../hooks/useBoard';
+import { createBoard, getBoards } from '../api/boards';
 
 function BoardPage() {
-  // Hardcoded board ID - from seed data
-  const BOARD_ID = 1;
+  // State for board ID (will be set after fetching/creating)
+  const [boardId, setBoardId] = useState(null);
+  const [initializing, setInitializing] = useState(true);
   
   // Use our custom hook to fetch board data
-  const { board, labels, members, loading, error, refetch } = useBoard(BOARD_ID);
+  const { board, labels, members, loading, error, refetch } = useBoard(boardId);
   
   // State for search results (null = no search, array = filtered cards)
   const [searchResults, setSearchResults] = useState(null);
+
+  /**
+   * Initialize: Check for existing boards or create one
+   */
+  useEffect(() => {
+    const initBoard = async () => {
+      try {
+        // Try to get existing boards
+        const res = await getBoards();
+        if (res.data && res.data.length > 0) {
+          // Use the first board
+          setBoardId(res.data[0].id);
+        } else {
+          // No boards exist, create one
+          const newBoard = await createBoard('My Trello Board');
+          setBoardId(newBoard.data.id);
+        }
+      } catch (err) {
+        console.error('Failed to initialize board:', err);
+      } finally {
+        setInitializing(false);
+      }
+    };
+    initBoard();
+  }, []);
 
   /**
    * Handle search results from BoardHeader
@@ -33,7 +59,7 @@ function BoardPage() {
   };
 
   // Show loading state
-  if (loading) {
+  if (initializing || loading) {
     return <div className="loading">Loading board...</div>;
   }
 
@@ -43,7 +69,7 @@ function BoardPage() {
       <div className="empty-state">
         <h2>Error loading board</h2>
         <p>{error}</p>
-        <p>Make sure the backend is running on http://localhost:8000</p>
+        <p>Please check your internet connection and refresh the page.</p>
       </div>
     );
   }
@@ -53,7 +79,7 @@ function BoardPage() {
     return (
       <div className="empty-state">
         <h2>No board found</h2>
-        <p>Run the backend seed script to create sample data.</p>
+        <p>Please refresh the page to create a new board.</p>
       </div>
     );
   }
