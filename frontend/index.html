@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trello Clone</title>
+    
+    <!-- React via CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0079bf 0%, #5067c5 100%);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0,0,0,0.15);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 20px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .search-box input, .search-box select {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .search-box input {
+            width: 200px;
+            background: rgba(255,255,255,0.9);
+        }
+
+        /* Board */
+        .board {
+            display: flex;
+            padding: 20px;
+            gap: 12px;
+            overflow-x: auto;
+            min-height: calc(100vh - 60px);
+            align-items: flex-start;
+        }
+
+        /* List */
+        .list {
+            background: #ebecf0;
+            border-radius: 4px;
+            min-width: 280px;
+            max-width: 280px;
+            max-height: calc(100vh - 100px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .list-header {
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #172b4d;
+        }
+
+        .list-header input {
+            flex: 1;
+            border: 2px solid #0079bf;
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .list-cards {
+            padding: 0 8px 8px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: 4px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .card:hover {
+            background: #f4f5f7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .card.dragging {
+            opacity: 0.5;
+        }
+
+        .card-labels {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+
+        .card-label {
+            height: 8px;
+            min-width: 40px;
+            border-radius: 4px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            color: #172b4d;
+            margin-bottom: 6px;
+        }
+
+        .card-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            color: #5e6c84;
+        }
+
+        .card-badge {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .card-badge.overdue {
+            background: #eb5a46;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .card-badge.due-soon {
+            background: #f2d600;
+            color: #172b4d;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .card-members {
+            display: flex;
+            gap: 4px;
+            margin-left: auto;
+        }
+
+        .member-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn-primary {
+            background: #0079bf;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #026aa7;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #6b778c;
+        }
+
+        .btn-danger {
+            background: #eb5a46;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #cf513d;
+        }
+
+        .add-btn {
+            padding: 10px;
+            color: #5e6c84;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+            border-radius: 4px;
+        }
+
+        .add-btn:hover {
+            background: rgba(0,0,0,0.08);
+            color: #172b4d;
+        }
+
+        /* Add List */
+        .add-list {
+            min-width: 280px;
+        }
+
+        .add-list-btn {
+            background: rgba(255,255,255,0.24);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+        }
+
+        .add-list-btn:hover {
+            background: rgba(255,255,255,0.32);
+        }
+
+        .add-list-form {
+            background: #ebecf0;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .add-list-form input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #0079bf;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        /* Add Card Form */
+        .add-card-form {
+            padding: 8px;
+        }
+
+        .add-card-form textarea {
+            width: 100%;
+            border: none;
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            min-height: 60px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .modal {
+            background: #f4f5f7;
+            border-radius: 4px;
+            width: 700px;
+            max-width: 95%;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            position: relative;
+            margin-bottom: 50px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b778c;
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        .modal-close:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            padding: 20px;
+            padding-right: 50px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            border: none;
+            background: transparent;
+            width: 100%;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .modal-title:focus {
+            background: white;
+            outline: 2px solid #0079bf;
+        }
+
+        .modal-body {
+            display: flex;
+            padding: 0 20px 20px;
+            gap: 20px;
+        }
+
+        .modal-main {
+            flex: 1;
+        }
+
+        .modal-sidebar {
+            width: 170px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #5e6c84;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .description-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .description-input:focus {
+            outline: 2px solid #0079bf;
+        }
+
+        /* Labels in Modal */
+        .labels-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .label-tag {
+            padding: 6px 12px;
+            border-radius: 4px;
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Members in Modal */
+        .members-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .member-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            background: white;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        /* Checklist */
+        .checklist-progress {
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #dfe1e6;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #5aac44;
+            transition: width 0.3s;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            margin-bottom: 4px;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checklist-item span {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .checklist-item span.completed {
+            text-decoration: line-through;
+            color: #5e6c84;
+        }
+
+        .checklist-item .delete-btn {
+            opacity: 0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6b778c;
+            font-size: 16px;
+        }
+
+        .checklist-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .add-item-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #dfe1e6;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+
+        .add-item-input:focus {
+            outline: none;
+            border-color: #0079bf;
+        }
+
+        /* Sidebar buttons */
+        .sidebar-btn {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.04);
+            border: none;
+            border-radius: 4px;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .sidebar-btn:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            min-width: 200px;
+            z-index: 10;
+            padding: 8px;
+        }
+
+        .dropdown-item {
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-item:hover {
+            background: #f4f5f7;
+        }
+
+        .color-box {
+            width: 40px;
+            height: 24px;
+            border-radius: 4px;
+        }
+
+        /* Due Date */
+        .due-date-input {
+            padding: 8px;
+            border: 1px solid #dfe1e6;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            font-size: 20px;
+        }
+
+        /* Delete button for list */
+        .delete-list-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6b778c;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .delete-list-btn:hover {
+            background: rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const API_URL = 'http://localhost:8000';
+
+        // API Functions
+        const api = {
+            getBoards: () => fetch(`${API_URL}/boards/`).then(r => r.json()),
+            getBoard: (id) => fetch(`${API_URL}/boards/${id}`).then(r => r.json()),
+            createBoard: (title) => fetch(`${API_URL}/boards/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title })
+            }).then(r => r.json()),
+            
+            getLabels: () => fetch(`${API_URL}/labels/`).then(r => r.json()),
+            getMembers: () => fetch(`${API_URL}/members/`).then(r => r.json()),
+            
+            createList: (title, board_id) => fetch(`${API_URL}/lists/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, board_id, position: 0 })
+            }).then(r => r.json()),
+            updateList: (id, data) => fetch(`${API_URL}/lists/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(r => r.json()),
+            deleteList: (id) => fetch(`${API_URL}/lists/${id}`, { method: 'DELETE' }),
+            
+            createCard: (title, list_id) => fetch(`${API_URL}/cards/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, list_id, position: 0 })
+            }).then(r => r.json()),
+            updateCard: (id, data) => fetch(`${API_URL}/cards/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(r => r.json()),
+            deleteCard: (id) => fetch(`${API_URL}/cards/${id}`, { method: 'DELETE' }),
+            archiveCard: (id) => fetch(`${API_URL}/cards/${id}/archive`, { method: 'PATCH' }),
+            moveCard: (id, list_id, position) => fetch(`${API_URL}/cards/${id}/move`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ list_id, position })
+            }).then(r => r.json()),
+            
+            addLabel: (cardId, labelId) => fetch(`${API_URL}/cards/${cardId}/labels/${labelId}`, { method: 'POST' }),
+            removeLabel: (cardId, labelId) => fetch(`${API_URL}/cards/${cardId}/labels/${labelId}`, { method: 'DELETE' }),
+            
+            addMember: (cardId, memberId) => fetch(`${API_URL}/cards/${cardId}/members/${memberId}`, { method: 'POST' }),
+            removeMember: (cardId, memberId) => fetch(`${API_URL}/cards/${cardId}/members/${memberId}`, { method: 'DELETE' }),
+            
+            addChecklistItem: (cardId, text) => fetch(`${API_URL}/cards/${cardId}/checklist`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, card_id: cardId })
+            }).then(r => r.json()),
+            toggleChecklistItem: (itemId) => fetch(`${API_URL}/cards/checklist/${itemId}/toggle`, { method: 'PATCH' }),
+            deleteChecklistItem: (itemId) => fetch(`${API_URL}/cards/checklist/${itemId}`, { method: 'DELETE' }),
+            
+            searchCards: (params) => {
+                const query = new URLSearchParams(params).toString();
+                return fetch(`${API_URL}/search/cards?${query}`).then(r => r.json());
+            }
+        };
+
+        // Card Modal Component
+        function CardModal({ card, listTitle, labels, members, onClose, onRefresh }) {
+            const [title, setTitle] = useState(card.title);
+            const [description, setDescription] = useState(card.description || '');
+            const [dueDate, setDueDate] = useState(card.due_date || '');
+            const [newItem, setNewItem] = useState('');
+            const [showLabels, setShowLabels] = useState(false);
+            const [showMembers, setShowMembers] = useState(false);
+
+            const handleSaveTitle = async () => {
+                if (title.trim() && title !== card.title) {
+                    await api.updateCard(card.id, { title: title.trim() });
+                    onRefresh();
+                }
+            };
+
+            const handleSaveDescription = async () => {
+                if (description !== card.description) {
+                    await api.updateCard(card.id, { description });
+                    onRefresh();
+                }
+            };
+
+            const handleSaveDueDate = async (value) => {
+                setDueDate(value);
+                await api.updateCard(card.id, { due_date: value || null });
+                onRefresh();
+            };
+
+            const handleDelete = async () => {
+                if (confirm('Delete this card?')) {
+                    await api.deleteCard(card.id);
+                    onClose();
+                    onRefresh();
+                }
+            };
+
+            const handleArchive = async () => {
+                await api.archiveCard(card.id);
+                onClose();
+                onRefresh();
+            };
+
+            const toggleLabel = async (label) => {
+                const hasLabel = card.labels?.some(l => l.id === label.id);
+                if (hasLabel) {
+                    await api.removeLabel(card.id, label.id);
+                } else {
+                    await api.addLabel(card.id, label.id);
+                }
+                onRefresh();
+            };
+
+            const toggleMember = async (member) => {
+                const hasMember = card.members?.some(m => m.id === member.id);
+                if (hasMember) {
+                    await api.removeMember(card.id, member.id);
+                } else {
+                    await api.addMember(card.id, member.id);
+                }
+                onRefresh();
+            };
+
+            const addChecklistItem = async (e) => {
+                e.preventDefault();
+                if (newItem.trim()) {
+                    await api.addChecklistItem(card.id, newItem.trim());
+                    setNewItem('');
+                    onRefresh();
+                }
+            };
+
+            const toggleItem = async (itemId) => {
+                await api.toggleChecklistItem(itemId);
+                onRefresh();
+            };
+
+            const deleteItem = async (itemId) => {
+                await api.deleteChecklistItem(itemId);
+                onRefresh();
+            };
+
+            const checklist = card.checklist_items || [];
+            const completed = checklist.filter(i => i.is_completed).length;
+            const progress = checklist.length > 0 ? Math.round((completed / checklist.length) * 100) : 0;
+
+            return (
+                <div className="modal-overlay" onClick={onClose}>
+                    <div className="modal" onClick={e => e.stopPropagation()}>
+                        <button className="modal-close" onClick={onClose}>×</button>
+                        
+                        <div className="modal-header">
+                            <input
+                                className="modal-title"
+                                value={title}
+                                onChange={e => setTitle(e.target.value)}
+                                onBlur={handleSaveTitle}
+                            />
+                            <div style={{ color: '#5e6c84', fontSize: 14, marginTop: 4 }}>
+                                in list <strong>{listTitle}</strong>
+                            </div>
+                        </div>
+
+                        <div className="modal-body">
+                            <div className="modal-main">
+                                {/* Labels */}
+                                {card.labels?.length > 0 && (
+                                    <div className="section">
+                                        <div className="section-title">Labels</div>
+                                        <div className="labels-list">
+                                            {card.labels.map(l => (
+                                                <span key={l.id} className="label-tag" style={{ background: l.color }}>
+                                                    {l.name}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Members */}
+                                {card.members?.length > 0 && (
+                                    <div className="section">
+                                        <div className="section-title">Members</div>
+                                        <div className="members-list">
+                                            {card.members.map(m => (
+                                                <span key={m.id} className="member-tag">
+                                                    <span className="member-avatar" style={{ background: m.avatar_color, width: 24, height: 24 }}>
+                                                        {m.name[0]}
+                                                    </span>
+                                                    {m.name}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Due Date Display */}
+                                {dueDate && (
+                                    <div className="section">
+                                        <div className="section-title">Due Date</div>
+                                        <div>{new Date(dueDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                                    </div>
+                                )}
+
+                                {/* Description */}
+                                <div className="section">
+                                    <div className="section-title">Description</div>
+                                    <textarea
+                                        className="description-input"
+                                        placeholder="Add a description..."
+                                        value={description}
+                                        onChange={e => setDescription(e.target.value)}
+                                        onBlur={handleSaveDescription}
+                                    />
+                                </div>
+
+                                {/* Checklist */}
+                                <div className="section">
+                                    <div className="section-title">Checklist</div>
+                                    {checklist.length > 0 && (
+                                        <div className="checklist-progress">
+                                            <div style={{ fontSize: 12, color: '#5e6c84', marginBottom: 4 }}>{progress}%</div>
+                                            <div className="progress-bar">
+                                                <div className="progress-fill" style={{ width: `${progress}%` }} />
+                                            </div>
+                                        </div>
+                                    )}
+                                    {checklist.map(item => (
+                                        <div key={item.id} className="checklist-item">
+                                            <input
+                                                type="checkbox"
+                                                checked={item.is_completed}
+                                                onChange={() => toggleItem(item.id)}
+                                            />
+                                            <span className={item.is_completed ? 'completed' : ''}>{item.text}</span>
+                                            <button className="delete-btn" onClick={() => deleteItem(item.id)}>×</button>
+                                        </div>
+                                    ))}
+                                    <form onSubmit={addChecklistItem}>
+                                        <input
+                                            className="add-item-input"
+                                            placeholder="Add an item..."
+                                            value={newItem}
+                                            onChange={e => setNewItem(e.target.value)}
+                                        />
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div className="modal-sidebar">
+                                <div className="section-title">Add to card</div>
+                                
+                                {/* Labels Dropdown */}
+                                <div className="dropdown">
+                                    <button className="sidebar-btn" onClick={() => setShowLabels(!showLabels)}>
+                                        🏷️ Labels
+                                    </button>
+                                    {showLabels && (
+                                        <div className="dropdown-menu">
+                                            {labels.map(l => (
+                                                <div key={l.id} className="dropdown-item" onClick={() => toggleLabel(l)}>
+                                                    <div className="color-box" style={{ background: l.color }} />
+                                                    {l.name}
+                                                    {card.labels?.some(cl => cl.id === l.id) && ' ✓'}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Members Dropdown */}
+                                <div className="dropdown">
+                                    <button className="sidebar-btn" onClick={() => setShowMembers(!showMembers)}>
+                                        👤 Members
+                                    </button>
+                                    {showMembers && (
+                                        <div className="dropdown-menu">
+                                            {members.map(m => (
+                                                <div key={m.id} className="dropdown-item" onClick={() => toggleMember(m)}>
+                                                    <span className="member-avatar" style={{ background: m.avatar_color, width: 24, height: 24 }}>
+                                                        {m.name[0]}
+                                                    </span>
+                                                    {m.name}
+                                                    {card.members?.some(cm => cm.id === m.id) && ' ✓'}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Due Date */}
+                                <div style={{ marginTop: 10 }}>
+                                    <div className="section-title">Due Date</div>
+                                    <input
+                                        type="date"
+                                        className="due-date-input"
+                                        value={dueDate}
+                                        onChange={e => handleSaveDueDate(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="section-title" style={{ marginTop: 20 }}>Actions</div>
+                                <button className="sidebar-btn" onClick={handleArchive}>📦 Archive</button>
+                                <button className="sidebar-btn" style={{ color: '#eb5a46' }} onClick={handleDelete}>🗑️ Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Card Component
+        function Card({ card, listTitle, labels, members, onRefresh }) {
+            const [showModal, setShowModal] = useState(false);
+
+            const formatDate = (dateStr) => {
+                if (!dateStr) return null;
+                const date = new Date(dateStr);
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                const isOverdue = date < today;
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const isDueSoon = date <= tomorrow && !isOverdue;
+                return {
+                    text: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                    isOverdue,
+                    isDueSoon
+                };
+            };
+
+            const due = formatDate(card.due_date);
+            const checklistCount = card.checklist_items?.length > 0 
+                ? `${card.checklist_items.filter(i => i.is_completed).length}/${card.checklist_items.length}`
+                : null;
+
+            return (
+                <>
+                    <div className="card" onClick={() => setShowModal(true)}>
+                        {card.labels?.length > 0 && (
+                            <div className="card-labels">
+                                {card.labels.map(l => (
+                                    <div key={l.id} className="card-label" style={{ background: l.color }} title={l.name} />
+                                ))}
+                            </div>
+                        )}
+                        <div className="card-title">{card.title}</div>
+                        <div className="card-badges">
+                            {due && (
+                                <span className={`card-badge ${due.isOverdue ? 'overdue' : due.isDueSoon ? 'due-soon' : ''}`}>
+                                    📅 {due.text}
+                                </span>
+                            )}
+                            {card.description && <span className="card-badge">📝</span>}
+                            {checklistCount && <span className="card-badge">☑️ {checklistCount}</span>}
+                            {card.members?.length > 0 && (
+                                <div className="card-members">
+                                    {card.members.slice(0, 3).map(m => (
+                                        <div key={m.id} className="member-avatar" style={{ background: m.avatar_color }} title={m.name}>
+                                            {m.name[0]}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    {showModal && (
+                        <CardModal
+                            card={card}
+                            listTitle={listTitle}
+                            labels={labels}
+                            members={members}
+                            onClose={() => setShowModal(false)}
+                            onRefresh={onRefresh}
+                        />
+                    )}
+                </>
+            );
+        }
+
+        // List Component
+        function List({ list, labels, members, onRefresh }) {
+            const [isEditing, setIsEditing] = useState(false);
+            const [title, setTitle] = useState(list.title);
+            const [isAdding, setIsAdding] = useState(false);
+            const [newCardTitle, setNewCardTitle] = useState('');
+
+            const handleSaveTitle = async () => {
+                if (title.trim() && title !== list.title) {
+                    await api.updateList(list.id, { title: title.trim() });
+                    onRefresh();
+                }
+                setIsEditing(false);
+            };
+
+            const handleDelete = async () => {
+                if (confirm('Delete this list and all its cards?')) {
+                    await api.deleteList(list.id);
+                    onRefresh();
+                }
+            };
+
+            const handleAddCard = async (e) => {
+                e.preventDefault();
+                if (newCardTitle.trim()) {
+                    await api.createCard(newCardTitle.trim(), list.id);
+                    setNewCardTitle('');
+                    setIsAdding(false);
+                    onRefresh();
+                }
+            };
+
+            const cards = (list.cards || []).filter(c => !c.archived).sort((a, b) => a.position - b.position);
+
+            return (
+                <div className="list">
+                    <div className="list-header">
+                        {isEditing ? (
+                            <input
+                                value={title}
+                                onChange={e => setTitle(e.target.value)}
+                                onBlur={handleSaveTitle}
+                                onKeyDown={e => e.key === 'Enter' && handleSaveTitle()}
+                                autoFocus
+                            />
+                        ) : (
+                            <span onClick={() => setIsEditing(true)} style={{ cursor: 'pointer', flex: 1 }}>
+                                {list.title}
+                            </span>
+                        )}
+                        <button className="delete-list-btn" onClick={handleDelete}>×</button>
+                    </div>
+
+                    <div className="list-cards">
+                        {cards.map(card => (
+                            <Card
+                                key={card.id}
+                                card={card}
+                                listTitle={list.title}
+                                labels={labels}
+                                members={members}
+                                onRefresh={onRefresh}
+                            />
+                        ))}
+                    </div>
+
+                    {isAdding ? (
+                        <form className="add-card-form" onSubmit={handleAddCard}>
+                            <textarea
+                                placeholder="Enter a title for this card..."
+                                value={newCardTitle}
+                                onChange={e => setNewCardTitle(e.target.value)}
+                                autoFocus
+                            />
+                            <div className="form-actions">
+                                <button type="submit" className="btn btn-primary">Add Card</button>
+                                <button type="button" className="btn btn-secondary" onClick={() => setIsAdding(false)}>×</button>
+                            </div>
+                        </form>
+                    ) : (
+                        <button className="add-btn" onClick={() => setIsAdding(true)}>+ Add a card</button>
+                    )}
+                </div>
+            );
+        }
+
+        // AddList Component
+        function AddList({ boardId, onRefresh }) {
+            const [isAdding, setIsAdding] = useState(false);
+            const [title, setTitle] = useState('');
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                if (title.trim()) {
+                    await api.createList(title.trim(), boardId);
+                    setTitle('');
+                    setIsAdding(false);
+                    onRefresh();
+                }
+            };
+
+            if (!isAdding) {
+                return (
+                    <div className="add-list">
+                        <button className="add-list-btn" onClick={() => setIsAdding(true)}>
+                            + Add another list
+                        </button>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="add-list">
+                    <form className="add-list-form" onSubmit={handleSubmit}>
+                        <input
+                            placeholder="Enter list title..."
+                            value={title}
+                            onChange={e => setTitle(e.target.value)}
+                            autoFocus
+                        />
+                        <div className="form-actions">
+                            <button type="submit" className="btn btn-primary">Add List</button>
+                            <button type="button" className="btn btn-secondary" onClick={() => setIsAdding(false)}>×</button>
+                        </div>
+                    </form>
+                </div>
+            );
+        }
+
+        // Main App Component
+        function App() {
+            const [board, setBoard] = useState(null);
+            const [labels, setLabels] = useState([]);
+            const [members, setMembers] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [searchQuery, setSearchQuery] = useState('');
+            const [labelFilter, setLabelFilter] = useState('');
+            const [memberFilter, setMemberFilter] = useState('');
+            const [searchResults, setSearchResults] = useState(null);
+
+            const fetchData = async () => {
+                try {
+                    const [boardsData, labelsData, membersData] = await Promise.all([
+                        api.getBoards(),
+                        api.getLabels(),
+                        api.getMembers()
+                    ]);
+                    
+                    if (boardsData.length > 0) {
+                        const boardData = await api.getBoard(boardsData[0].id);
+                        setBoard(boardData);
+                    }
+                    setLabels(labelsData);
+                    setMembers(membersData);
+                } catch (err) {
+                    console.error('Error fetching data:', err);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            useEffect(() => {
+                fetchData();
+            }, []);
+
+            const handleSearch = async () => {
+                const params = {};
+                if (searchQuery) params.q = searchQuery;
+                if (labelFilter) params.label_id = labelFilter;
+                if (memberFilter) params.member_id = memberFilter;
+
+                if (Object.keys(params).length > 0) {
+                    const results = await api.searchCards(params);
+                    setSearchResults(results.map(c => c.id));
+                } else {
+                    setSearchResults(null);
+                }
+            };
+
+            const clearSearch = () => {
+                setSearchQuery('');
+                setLabelFilter('');
+                setMemberFilter('');
+                setSearchResults(null);
+            };
+
+            const handleCreateBoard = async () => {
+                const title = prompt('Enter board title:');
+                if (title?.trim()) {
+                    const newBoard = await api.createBoard(title.trim());
+                    setBoard(newBoard);
+                }
+            };
+
+            if (loading) {
+                return <div className="loading">Loading...</div>;
+            }
+
+            if (!board) {
+                return (
+                    <div className="loading">
+                        <div style={{ textAlign: 'center' }}>
+                            <h2>Welcome to Trello Clone!</h2>
+                            <p style={{ margin: '20px 0' }}>No boards found. Create one to get started.</p>
+                            <button className="btn btn-primary" onClick={handleCreateBoard}>Create Board</button>
+                        </div>
+                    </div>
+                );
+            }
+
+            const lists = (board.lists || []).sort((a, b) => a.position - b.position);
+
+            // Filter cards based on search
+            const filterCards = (cards) => {
+                if (!searchResults) return cards;
+                return cards.filter(c => searchResults.includes(c.id));
+            };
+
+            return (
+                <div>
+                    <div className="header">
+                        <h1>{board.title}</h1>
+                        <div className="search-box">
+                            <input
+                                placeholder="Search cards..."
+                                value={searchQuery}
+                                onChange={e => setSearchQuery(e.target.value)}
+                                onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                            />
+                            <select value={labelFilter} onChange={e => setLabelFilter(e.target.value)}>
+                                <option value="">All Labels</option>
+                                {labels.map(l => (
+                                    <option key={l.id} value={l.id}>{l.name}</option>
+                                ))}
+                            </select>
+                            <select value={memberFilter} onChange={e => setMemberFilter(e.target.value)}>
+                                <option value="">All Members</option>
+                                {members.map(m => (
+                                    <option key={m.id} value={m.id}>{m.name}</option>
+                                ))}
+                            </select>
+                            <button className="btn btn-primary" onClick={handleSearch}>Search</button>
+                            {(searchQuery || labelFilter || memberFilter) && (
+                                <button className="btn btn-secondary" onClick={clearSearch} style={{ color: 'white' }}>Clear</button>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="board">
+                        {lists.map(list => (
+                            <List
+                                key={list.id}
+                                list={{ ...list, cards: filterCards(list.cards || []) }}
+                                labels={labels}
+                                members={members}
+                                onRefresh={fetchData}
+                            />
+                        ))}
+                        <AddList boardId={board.id} onRefresh={fetchData} />
+                    </div>
+                </div>
+            );
+        }
+
+        // Render
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

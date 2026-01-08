@@ -1,0 +1,73 @@
+Project Management Tool
+(Trello Clone)
+SDE Intern Fullstack Assignment
+Description
+Build a Kanban-style project management web application that closely replicates Trello's design and user experience. The application should allow users to create boards with lists and cards, organize tasks using drag-and-drop, and manage project workflows visually. Your implementation should resemble Trello's UI patterns, layout structure, and interaction design.
+AI Tools Usage
+You are allowed and encouraged to use AI tools such as ChatGPT, Claude, GitHub Copilot, Cursor, or any other AI assistants for development. However, you must understand every line of code you submit and be prepared to explain your implementation decisions during the evaluation interview.
+Technical Stack
+Frontend: React.js or Next.js (Single Page Application)
+Backend: Node.js with Express.js OR Python with FastAPI/Django
+Database: PostgreSQL or MySQL (design your own schema)
+Core Features (Must Have)
+1. Board Management
+Create a board with a title
+View board with all its lists and cards
+2. Lists Management
+Create, edit, and delete lists
+Drag and drop to reorder lists
+3. Cards Management
+Create cards with a title
+Edit card title and description
+Delete or archive cards
+Drag and drop cards between lists
+Drag and drop to reorder cards within a list
+4. Card Details
+Add and remove labels (colored tags)
+Set due date on cards
+Add checklist with items (mark items as complete/incomplete)
+Assign members to cards
+5. Search & Filter
+Search cards by title
+Filter cards by labels, members, or due date
+Good to Have (Bonus)
+Responsive design (mobile, tablet, desktop)
+Multiple boards support
+File attachments on cards
+Comments and activity log on cards
+Card covers (images)
+Board background customization
+Important Notes
+UI Design: Your application should closely resemble Trello's design. Study Trello's UI carefully before starting - visit trello.com to understand the user flows and interface patterns.
+Drag & Drop: The drag and drop functionality is a core feature. Ensure smooth interactions for reordering lists and moving cards.
+No Login Required: Assume a default user is logged in. Create sample members in the database for assignment functionality.
+Sample Data: Seed your database with a sample board, lists, cards, and members.
+Database Design: Design your own database schema. This will be evaluated.
+README File: Include setup instructions, tech stack used, and any assumptions made.
+Original Work: Plagiarism from existing repositories will result in immediate disqualification.
+Submission
+Upload your code to GitHub and ensure the repository is public
+Deploy your application (Vercel, Netlify, Render, Railway, or any cloud service)
+Submit both the GitHub repository link and the deployed application link
+Evaluation Criteria
+Criteria
+What We Look For
+Functionality
+All core features working correctly
+UI/UX
+Visual similarity to Trello's design and UX patterns
+Drag & Drop
+Smooth and intuitive drag-and-drop interactions
+Database Design
+Well-structured schema with proper relationships
+Code Quality
+Clean, readable, and well-organized code
+Code Modularity
+Proper separation of concerns, reusable components
+Code Understanding
+Ability to explain your code during evaluation
+
+
+Timeline
+Submission Deadline: 2 days from the date of receiving this assignment
+Good luck!
