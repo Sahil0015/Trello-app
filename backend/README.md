@@ -2,6 +2,14 @@
 
 A FastAPI-based REST API for a Kanban-style project management application.
 
+## 🌐 Live Deployment
+
+| Service | URL |
+|---------|-----|
+| **API** | [https://trello-backend-production.up.railway.app](https://trello-backend-production.up.railway.app) |
+| **Swagger Docs** | [https://trello-backend-production.up.railway.app/docs](https://trello-backend-production.up.railway.app/docs) |
+| **ReDoc** | [https://trello-backend-production.up.railway.app/redoc](https://trello-backend-production.up.railway.app/redoc) |
+
 ## Tech Stack
 
 - **Framework**: FastAPI (Python 3.8+)

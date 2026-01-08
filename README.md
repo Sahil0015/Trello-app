@@ -4,6 +4,14 @@ A Kanban-style project management application inspired by Trello, built with Fas
 
 ![Trello Clone](https://img.shields.io/badge/Status-Complete-green) ![Python](https://img.shields.io/badge/Python-3.8+-blue) ![React](https://img.shields.io/badge/React-18-61DAFB)
 
+## 🌐 Live Demo
+
+| Service | URL |
+|---------|-----|
+| **Frontend** | [https://trello-app-iota.vercel.app](https://trello-app-iota.vercel.app) |
+| **Backend API** | [https://trello-backend-production.up.railway.app](https://trello-backend-production.up.railway.app) |
+| **API Docs** | [https://trello-backend-production.up.railway.app/docs](https://trello-backend-production.up.railway.app/docs) |
+
 ## 🎯 Features
 
 ### Board Management
@@ -179,16 +187,14 @@ Open http://localhost:3000 and:
 ## 🚀 Deployment
 
 ### Backend (Railway) ✅
-Already deployed at: https://trello-backend-production.up.railway.app
+- **Live URL**: https://trello-backend-production.up.railway.app
+- **API Docs**: https://trello-backend-production.up.railway.app/docs
+- Auto-seeds sample data on fresh deployment
 
-### Frontend (Vercel/Netlify)
-1. Push code to GitHub
-2. Connect repository to Vercel or Netlify
-3. Configure:
-   - Build command: `npm run build`
-   - Output directory: `build`
-   - Root directory: `frontend`
-4. Deploy!
+### Frontend (Vercel) ✅
+- **Live URL**: https://trello-app-iota.vercel.app
+- Connected to Railway backend
+- Auto-deploys on push to main branch
 
 ## 📄 License
 

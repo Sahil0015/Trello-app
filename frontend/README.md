@@ -2,6 +2,12 @@
 
 A React-based Kanban board application with drag-and-drop functionality.
 
+## 🌐 Live Demo
+
+**Live URL**: [https://trello-app-iota.vercel.app](https://trello-app-iota.vercel.app)
+
+Connected to backend: [https://trello-backend-production.up.railway.app](https://trello-backend-production.up.railway.app)
+
 ## Tech Stack
 
 - **Framework**: React 18 (Functional Components + Hooks only)
@@ -29,7 +35,7 @@ A React-based Kanban board application with drag-and-drop functionality.
 ### Prerequisites
 - Node.js 18+ installed
 - npm (comes with Node.js)
-- Backend running at `http://localhost:8000`
+- Backend running at `http://localhost:8000` (for local dev) or use deployed backend
 
 ### 1. Navigate to frontend folder
 ```bash
